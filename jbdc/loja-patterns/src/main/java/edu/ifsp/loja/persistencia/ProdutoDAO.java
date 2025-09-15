@@ -1,40 +1,28 @@
 package edu.ifsp.loja.persistencia;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.ifsp.loja.modelo.Produto;
 
 public class ProdutoDAO {
+	
+	
+	public List<Produto> findByDescricao(String descricao) {
+		List<Produto> produtos = new ArrayList<>();
 
-	public List<Produto> findByDescricao(String descricao) throws PersistenceException{
-		
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		}catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		
-		List<Produto> produtos = new ArrayList<Produto>();
-		
-		try{
-			Connection conn = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3307/loja?" +
-		        "user=root&password=root");
-			
-			Statement stmt = conn.createStatement();
-			
-			ResultSet rs = stmt.executeQuery(
-					"SELECT id, descricao, preco FROM produto " + 
-					"WHERE descricao LIKE '%" + descricao +"%'"
-					);
-			
-			while (rs.next()) { 
+			Connection conn = ConnectionFactory.getConnection();
+
+			PreparedStatement ps = conn.prepareStatement("SELECT id, descricao, preco FROM produto WHERE descricao LIKE ?");
+			ps.setString(1, "%" + descricao + "%");
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
 				Produto produto = new Produto();
 				produto.setId(rs.getInt("id"));
 				produto.setDescricao(rs.getString("descricao"));
@@ -42,15 +30,36 @@ public class ProdutoDAO {
 
 				produtos.add(produto);
 			}
-			
-			rs.close();
-			stmt.close();
-			conn.close();
-				
-		}catch(SQLException e){
-			throw PersistenceException.wrap(e);
+
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
 		}
-		
+
 		return produtos;
+	}
+
+	
+	public Produto findById(int id) {
+		Produto produto = null;
+		
+		try {
+			Connection conn = ConnectionFactory.getConnection();
+			PreparedStatement ps = conn.prepareStatement("SELECT id, descricao, preco FROM produto WHERE id = ?");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				produto = new Produto();
+				produto.setId(rs.getInt("id"));
+				produto.setDescricao(rs.getString("descricao"));
+				produto.setPreco(rs.getDouble("preco"));				
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	
+		return produto;		
 	}
 }
