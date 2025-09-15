@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import edu.ifsp.loja.modelo.Produto;
-import edu.ifsp.loja.persistencia.PersistenceException;
 import edu.ifsp.loja.persistencia.ProdutoDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -16,24 +15,17 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/produto/pesquisar")
 public class PesquisarProdutoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String query = request.getParameter("query");
-		
+
 		if (query != null) {
-			try{
-				ProdutoDAO dao = new ProdutoDAO();
-				List<Produto> produtos = dao.findByDescricao(query);
-				
-				request.setAttribute("produtos", produtos);
-				
-			}catch (PersistenceException e) {
-				throw new ServletException(e);
-			}
-									
+			ProdutoDAO dao = new ProdutoDAO();
+			List<Produto> produtos = dao.findByDescricao(query);
+			request.setAttribute("produtos", produtos);
 		}
-		
+
 		RequestDispatcher rd = request.getRequestDispatcher("/paginas/produto/pesquisar.jsp");
 		rd.forward(request, response);
 	}
