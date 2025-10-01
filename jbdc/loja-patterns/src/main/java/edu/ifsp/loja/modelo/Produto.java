@@ -1,8 +1,8 @@
 package edu.ifsp.loja.modelo;
 
 public class Produto {
-	private int id;
-	private String descricao;
+	private int id = 0;
+	private String descricao = "";
 	private double preco;
 
 	public Produto() {

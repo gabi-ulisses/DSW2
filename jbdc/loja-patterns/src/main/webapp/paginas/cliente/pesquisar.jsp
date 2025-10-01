@@ -10,111 +10,133 @@
 	<meta charset="UTF-8">
 	<title>Clientes - Pesquisar</title>
 	<base href="<%= request.getContextPath() %>/">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/estilo.css">
 </head>
-<body class="container mt-4">
-
-	<h1 class="mb-4">Pesquisa de Clientes</h1>
+<body>
+<div class="container">
+	<h1>Pesquisa de Clientes</h1>
 	
-	<div class="card mb-4">
-		<div class="card-header">
-			Pesquisar por Nome
-		</div>
-		<div class="card-body">
-			<form action="cliente/pesquisar" method="get">
-				<div class="input-group">
-					<label for="queryNome" class="input-group-text">Nome do Cliente:</label>
-					<input type="text" id="queryNome" name="queryNome" class="form-control" value="${param.queryNome}" placeholder="Digite parte do nome...">
-					<button type="submit" class="btn btn-primary">Pesquisar</button>
-				</div>
-			</form>
-		</div>
+	<div style="margin-bottom: 20px;">
+		<label for="tipoDeBusca" style="display: block; margin-bottom: 5px;">Selecione o tipo de busca:</label>
+		<select id="tipoDeBusca">
+			<option value="">Selecione...</option>
+			<option value="nome">Buscar por Nome</option>
+			<option value="codigo">Buscar por Código</option>
+		</select>
 	</div>
 
-	<div class="card mb-4">
-		<div class="card-header">
-			Pesquisar por Código
-		</div>
-		<div class="card-body">
-			<form action="cliente/pesquisar" method="get">
-				<div class="input-group">
-					<label for="queryId" class="input-group-text">Código do Cliente:</label>
-					<input type="number" id="queryId" name="queryId" class="form-control" value="${param.queryId}" placeholder="Digite o código exato...">
-					<button type="submit" class="btn btn-primary">Pesquisar</button>
-				</div>
-			</form>
-		</div>
+	<div id="formNome" style="display: none;">
+		<form action="cliente/pesquisar" method="get">
+			<div class="grupo-formulario">
+				<input type="text" name="name" value="${param.queryNome}" placeholder="Digite parte do nome do cliente...">
+				<button type="submit" class="botao">Buscar</button>
+			</div>
+		</form>
 	</div>
-	
-	<hr>
+
+	<div id="formCodigo" style="display: none;">
+		<form action="cliente/pesquisar" method="get">
+			<div class="grupo-formulario">
+				<input type="number" name="id" value="${param.queryId}" placeholder="Digite o código exato do cliente...">
+				<button type="submit" class="botao">Buscar</button>
+			</div>
+		</form>
+	</div>
 
 	<%
-	// Recupera os atributos enviados pelo Servlet
 	List<Cliente> clientes = (List<Cliente>) request.getAttribute("clientes");
 	Cliente cliente = (Cliente) request.getAttribute("cliente");
 	String erro = (String) request.getAttribute("erro");
 	
-	// Exibe mensagem de erro, se houver (ex: ID inválido)
 	if (erro != null) {
 	%>
-		<div class="alert alert-danger"><%= erro %></div>
+		<p class="alerta"><%= erro %></p>
 	<%
 	}
 	
-	// --- Lógica para exibir resultados da busca por NOME ---
 	if (clientes != null) {
 		if (!clientes.isEmpty()) {
 	%>
-		<h2 class="mb-3">Resultados para a busca por nome: "${param.queryNome}"</h2>
-		<table class="table table-striped table-hover">
-			<thead>
-				<tr>
-					<th scope="col">ID</th>
-					<th scope="col">Nome</th>
-					<th scope="col">E-mail</th>
-				</tr>
-			</thead>
-			<tbody>
-				<% for (Cliente c : clientes) { %>
-				<tr>
-					<td><%= c.getId() %></td>
-					<td><%= c.getNome() %></td>
-					<td><%= c.getEmail() %></td>
-				</tr>
-				<% } %>
-			</tbody>
-		</table>
+		<h2>Resultados para a busca por nome: "${param.queryNome}"</h2>
+		<div class="container-tabela">
+			<table class="tabela-resultados">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nome</th>
+						<th>E-mail</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% for (Cliente c : clientes) { %>
+					<tr>
+						<td><%= c.getId() %></td>
+						<td><%= c.getNome() %></td>
+						<td><%= c.getEmail() %></td>
+					</tr>
+					<% } %>
+				</tbody>
+			</table>
+		</div>
 	<%
-		} else { // Se a lista estiver vazia
+		} else { 
 	%>	
-		<div class="alert alert-info">Nenhum cliente encontrado para o nome informado.</div>
+		<p class="alerta">Nenhum cliente encontrado para o nome informado.</p>
 	<%
 		}
 	} 
-	// --- Lógica para exibir resultados da busca por CÓDIGO ---
 	else if (request.getParameter("queryId") != null) {
 		if (cliente != null) {
 	%>
-		<h2 class="mb-3">Resultado para a busca por código: "${param.queryId}"</h2>
-		<div class="card" style="width: 24rem;">
-			<div class="card-body">
-				<h5 class="card-title"><%= cliente.getNome() %></h5>
-				<h6 class="card-subtitle mb-2 text-muted">ID: <%= cliente.getId() %></h6>
-				<p class="card-text"><strong>E-mail:</strong> <%= cliente.getEmail() %></p>
-			</div>
+		<h2>Resultado para a busca por código: "${param.queryId}"</h2>
+		<div class="container-tabela">
+			<table class="tabela-resultados">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nome</th>
+						<th>E-mail</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><%= cliente.getId() %></td>
+						<td><%= cliente.getNome() %></td>
+						<td><%= cliente.getEmail() %></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	<%
-		} else { // Se o cliente for nulo (não encontrado)
+		} else {
 	%>
-		<div class="alert alert-info">Nenhum cliente encontrado para o código informado.</div>
+		<p class="alerta">Nenhum cliente encontrado para o código informado.</p>
 	<%
 		}
 	}
 	%>
 	
-	<hr class="my-4">
-	<a href="home" class="btn btn-secondary">Voltar para a Home</a>
+	<hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
+	<a href="home" class="botao-voltar">Voltar para a Home</a>
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<script>
+		const tipoDeBusca = document.getElementById('tipoDeBusca');
+		const formNome = document.getElementById('formNome');
+		const formCodigo = document.getElementById('formCodigo');
+		
+		tipoDeBusca.addEventListener('change', function() {
+			const buscaSelecionada = this.value;
+			
+			formNome.style.display = 'none';
+			formCodigo.style.display = 'none';
+			
+			if (buscaSelecionada === 'nome') {
+				formNome.style.display = 'block';
+			} else if (buscaSelecionada === 'codigo') {
+				formCodigo.style.display = 'block';
+			}
+		});
+	</script>
+</div>
 </body>
 </html>
