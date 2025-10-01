@@ -6,25 +6,20 @@
 	<meta charset="UTF-8">
 	<title>Loja Patterns</title>
 	<base href="<%= request.getContextPath() %>/">
-	<link rel="stylesheet" href="css/estilo.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-<body>
-    <div class="cartao">
-        <h1>Loja Patterns</h1>
-        <h2>Menu</h2>
-        <ul class="lista-menu">
-            <li>
-                <a href="produto/editar">Cadastrar novo produto</a>
-            </li>
-            
-            <li>
-                <a href="produto/pesquisar">Pesquisar produtos</a>
-            </li>
-            <li>
-                <a href="cliente/pesquisar">Pesquisar clientes</a>
-            </li>
-            
-        </ul>
-    </div>
+<body class="container mt-5">
+	<div class="card p-4 mx-auto" style="max-width: 500px;">
+		<h1 class="card-title text-center mb-4">Loja Patterns</h1>
+		
+		<div class="card-body">
+			<h2 class="card-subtitle mb-3">Menu</h2>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">
+					<a href="produto/pesquisar" class="text-decoration-none d-block">Pesquisar produtos</a>
+				</li>
+			</ul>
+		</div>
+	</div>
 </body>
 </html>
